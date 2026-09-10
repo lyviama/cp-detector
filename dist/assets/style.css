@@ -310,9 +310,23 @@ button {
 }
 /* 十四轮（lyvia）：跳过表态入口 */
 .state-skip {
+  /* 六十一轮：与上方cat-btn选项同级大块，不再是小ghost钮 */
+  position: relative;
   width: 100%;
-  margin: 2px 0 20px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 44px 20px 20px;
+  margin: 2px 0 14px;
+  box-shadow: 0 1px 0 rgba(122, 90, 168, 0.08);
+  font-size: inherit;
+  color: inherit;
+  letter-spacing: normal;
 }
+.state-skip .cat-name { display: block; font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.state-skip .cat-desc { display: block; font-size: 13px; color: var(--ink-soft); }
+.state-skip .cat-next { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 28px; color: var(--gold); }
 .state-hint { font-size: 15px; color: var(--ink-soft); margin: 2px 0 16px; }
 .coins { margin-bottom: 30px; }
 .coin {
@@ -644,20 +658,33 @@ button {
 
 /* 三十五轮（lyvia）：每页底端软性品牌脚注，小字不抢内容 */
 .brand-foot {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
+  /* 六十一轮：fixed改随文档流——固定底部会与页面内容重叠，不专业 */
+  position: static;
   text-align: center;
   font-size: 11px;
   letter-spacing: 1px;
   color: rgba(45, 45, 45, 0.34);
-  z-index: 10;
+  padding: 14px 0 calc(env(safe-area-inset-bottom, 0px) + 10px);
   pointer-events: none;
 }
 
 /* ── 五十五轮（lyvia）：手动起卦（豆卜手动摇卦/装卦迁移）── */
 /* 六十轮（lyvia）：入口从小链接升格成按钮「手动起卦」+按钮下描述行 */
+.manual-entry {
+  /* 六十一轮：手动起卦升格独立大按钮块，与数字起卦同级 */
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 44px 20px 20px;
+  margin: 22px 0 14px;
+  box-shadow: 0 1px 0 rgba(122, 90, 168, 0.08);
+}
+.manual-entry .cat-name { display: block; font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.manual-entry .cat-desc { display: block; font-size: 13px; color: var(--ink-soft); }
+.manual-entry .cat-next { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 28px; color: var(--gold); }
 .btn-entry {
   display: block;
   width: 100%;
@@ -781,3 +808,18 @@ button {
 #manualGo:active { background: var(--purple-deep); }
 #manualGo:disabled:active { background: var(--gold-soft); }
 .manual-actions .ghost-btn { margin-top: 12px; }
+
+/* ── 六十一轮：结果页底排——重测一次独立一行，不与存图钮挤一排 ── */
+.actions-bottom { text-align: center; margin-top: 14px; }
+.btn-restart {
+  display: block;
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 2px;
+  padding: 13px 0;
+  border-radius: 12px;
+  border: none;
+}
+.btn-restart:active { opacity: .85; }
