@@ -823,3 +823,13 @@ button {
   border: none;
 }
 .btn-restart:active { opacity: .85; }
+
+/* ── 六十一轮：顶部安全遮罩——内容滚动到顶时在状态栏/原生悬浮键下方淡出，不再硬穿字 ── */
+.top-fade {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: calc(env(safe-area-inset-top, 0px) + 74px);
+  background: linear-gradient(to bottom, var(--paper) 0%, var(--paper) 62%, rgba(253, 250, 244, 0));
+  z-index: 40;
+  pointer-events: none;
+}
