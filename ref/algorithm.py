@@ -16,7 +16,7 @@ _cc_t2s = OpenCC('t2s')
 # ─── DeepSeek 配置 ─────────────────────────────────────────────
 DEEPSEEK_KEY = os.environ.get('AUXILIARY_VISION_API_KEY', '') or os.environ.get('DEEPSEEK_API_KEY', '')
 if not DEEPSEEK_KEY:
-    # Fallback: 从yijing-site api.py获取的key
+    # Fallback: 从server config api.py获取的key
     DEEPSEEK_KEY = 'sk-21f6df12c71347b985d89bb48fae68a3'
 LLM_BASE = 'https://api.deepseek.com/chat/completions'
 
