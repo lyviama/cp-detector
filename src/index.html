@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>真假CP鉴定器</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">真假CP<span class="brand-sub">鉴定器</span></div>
+    <div>
+      <button id="historyBtn" class="ghost-btn" type="button">卦史</button>
+      <button id="aboutBtn" class="ghost-btn" type="button">说明</button>
+    </div>
+  </header>
+
+  <!-- 首页：CP主路径 + 问点别的入口 -->
+  <main id="viewChoose" class="view">
+    <p class="lead">周易算法<br>大材小用中……</p>
+    <p class="lead-sub">测你磕的CP是真是假——选对CP，起一卦。</p>
+    <button id="startCpBtn" type="button">开始鉴定 · 测你磕的CP</button>
+    <button id="otherBtn" class="ghost-btn other-entry" type="button">不磕CP，问点别的 →</button>
+    <div class="algo-note">
+      <p>这是一个懂周易的人做出来的实用小工具。周易听起来像老登爱用的工具，实际上是一套经历了三千年时间不断被修正的量化算法。</p>
+      <p>六爻能做的事情：把模糊的事象变得容易分辨，使得选择决策成本降低。</p>
+      <p>本工具虽然开发来用于娱乐，但算法是严肃正经的：排盘、装卦、断旺衰，每一步都按传统方法来，全程在本地完成，没有AI幻觉介入。</p>
+    </div>
+  </main>
+
+  <!-- 问点别的（纯广告页：阉割版自述 + 问法展示；真算在「豆卜（Idolship）」完整版） -->
+  <section id="viewOther" class="view hidden">
+    <p class="cast-cat">问点别的（老派六爻，一事一占）</p>
+    <div class="ad-box">
+      <p class="ad-title">真假CP鉴定器其实是另外一个产品的阉割版</p>
+      <p class="ad-text">「真假CP鉴定器」是为参加小红书vibecoding大赛做的参赛小工具，只用到原版「豆卜（Idolship）」5%左右的功能。完整版正在免费公测，就等大家来玩、来吐槽、来反馈。</p>
+    </div>
+    <div id="otherList" class="cat-list"></div>
+    <button id="otherBack" class="ghost-btn" type="button">← 回首页</button>
+  </section>
+
+  <!-- CP状态（仅CP契合分类） -->
+  <section id="viewState" class="view hidden">
+    <p class="cast-cat state-title">选一个你对你的CP的看法<br><span class="state-title-sub">对照结果看你的直觉是否准确</span></p>
+    <div id="stateList" class="cat-list"></div>
+    <button id="skipStateBtn" class="ghost-btn state-skip" type="button">不表态，直接看卦 →</button>
+    <p class="state-hint">点一个看法，下一步填鉴定对象 →</p>
+    <button id="stateBack" class="ghost-btn" type="button">← 回首页</button>
+  </section>
+
+  <!-- CP名/生年输入（仅CP契合分类） -->
+  <section id="viewInput" class="view hidden">
+    <p id="inputTitle" class="page-title">假亦真时真亦假</p>
+    <p id="inputHint" class="page-title page-title-sub">我家CP到底是真是假</p>
+    <div class="input-card">
+      <label class="field-label" for="cpNameInput">鉴定对象</label>
+      <input id="cpNameInput" type="text" maxlength="24" autocomplete="off" placeholder="写下你家CP的名字/对你产品的疑惑">
+      <label class="field-label" for="castNumInput">数字起卦</label>
+      <input id="castNumInput" type="text" inputmode="numeric" maxlength="32" autocomplete="off" placeholder="可以输入纪念日/生日，不填则用随机起卦法">
+          <button id="manualEntryBtn" class="btn-entry" type="button">手动起卦</button>
+          <p class="entry-desc">想要更准？手动起卦功能已上线，点此进行即时摇卦/直接装卦排盘→</p>
+    <button id="inputStart" type="button">开始鉴定</button>
+    </div>
+    <p class="hint">名字和数字信息只在本地运行，用于起卦，不联网上传</p>
+
+    <!-- 五十五轮（lyvia）：豆卜手动起卦迁移——史同/虚拟人物没有生日数字，改用掷硬币/直接装卦 -->
+    
+    <button id="inputBack" class="ghost-btn" type="button">← 上一步</button>
+  </section>
+
+  <!-- 手动起卦（五十五轮：豆卜「手动摇卦/手动装卦」迁移；引擎只收一个动爻） -->
+  <section id="viewManual" class="view hidden">
+    <p class="page-title">手动起卦</p>
+    <p class="page-title page-title-sub">心诚则灵：自己摇出来的卦最准</p>
+    <div class="seg" id="manualSeg">
+      <div class="seg-btn" id="segFit" data-mode="fit">✋ 直接装卦</div>
+      <div class="seg-btn on" id="segShake" data-mode="shake">🎲 即时摇卦</div>
+    </div>
+    <p class="manual-tip" id="manualTip">点一爻换状态：阳 → 阴 → 老阳○ → 老阴✕；动爻选一个就好</p>
+    <ul id="yaoPick" class="yao-pick"></ul>
+    <div class="manual-actions">
+      <button id="manualRollBtn" type="button" class="hidden">掷第 1 爻</button>
+      <button id="manualReset" type="button" class="ghost-btn">重装</button>
+      <button id="manualGo" type="button" disabled>选一个动爻就能成卦</button>
+    </div>
+    <p class="manual-tip manual-tip-sub">☆ 标出的那一爻就是动爻——卦因它而变</p>
+    <button id="manualBack" class="ghost-btn" type="button">← 上一步</button>
+  </section>
+
+  <!-- 缓冲推演 -->
+  <section id="viewBuf" class="view hidden">
+    <div class="buf-wrap"><div class="buf-ring"></div><span class="buf-core">卦</span></div>
+    <p id="bufText" class="buf-text">净手起卦…</p>
+    <p class="hint">装卦纳甲 · 定用神 · 断旺衰冲合</p>
+  </section>
+
+  <!-- 摇卦 -->
+  <section id="viewCast" class="view hidden">
+    <p id="castCat" class="cast-cat"></p>
+    <div class="coins" id="coinRow">
+      <span class="coin">？</span><span class="coin">？</span><span class="coin">？</span>
+    </div>
+    <button id="shakeBtn" type="button">按住摇卦 · 松手落卦</button>
+    <p class="hint">先静心默想所问之事，再按住不放</p>
+    <button id="backChoose1" class="ghost-btn" type="button">← 问点别的</button>
+  </section>
+
+  <!-- 结果 -->
+  <section id="viewResult" class="view hidden">
+    <!-- 三十八轮（lyvia）：大字报即结果头——原头部文字（第N对/CP名/日期干支/档位大字/卦名/动爻/星级）已并入图中，页面不再重复 -->
+    <div id="posterBox" class="poster-box">
+      <img id="posterInlineImg" alt="大字报">
+      <p class="poster-hint" id="posterHint">点大字报可预览存图；三张一起带走，点下方「发笔记」</p>
+    </div>
+    <div class="gua-card">
+      <table class="yao-table"><tbody id="yaoBody"></tbody></table>
+      <p id="resDay" class="res-day"></p>
+    </div>
+    <div class="reading">
+      <div id="resSummary"></div>
+      <div id="resTiming"></div>
+      <div id="adviceBox" class="advice hidden">
+        <p class="advice-title">可以这样做</p>
+        <ul id="resAdvice"></ul>
+      </div>
+      <p class="footnote" id="resFoot"></p>
+    </div>
+    <div class="actions">
+      <button id="postNoteBtn" type="button">发笔记保存全部历史图鉴</button>
+      <button id="saveCardBtn" type="button" class="ghost-btn">存本次完整卦盘</button>
+      <button id="savePosterBtn" type="button" class="ghost-btn">存本次大字海报</button>
+      <button id="againBtn" class="ghost-btn" type="button">重测一次</button>
+      <button id="backChoose2" class="ghost-btn" type="button">换对CP</button>
+    </div>
+  </section>
+
+  <!-- 卦图鉴 + 卦史 -->
+  <section id="viewHistory" class="view hidden">
+    <p class="hist-title">八卦图鉴</p>
+    <p class="dex-progress" id="dexProgress"></p>
+    <div id="dexGrid" class="dex-grid"></div>
+    <p class="hist-title">最近卦史</p>
+    <ul id="historyList"></ul>
+    <button id="historyBack" class="ghost-btn" type="button">← 返回</button>
+  </section>
+</div>
+
+<!-- 说明 -->
+<div id="sheetMask" class="mask hidden">
+  <div class="sheet" id="aboutSheet">
+    <h3>玩法与说明</h3>
+    <p>「真假CP鉴定器」把传统六爻做成了趣味鉴定：心里带着一个具体的问题（这对CP是真嗑还是营业、票能不能成行、粉圈的事怎么处理），选个分类，CP契合就填个CP名、留一串有意义的神秘数字起卦，其他心事按住摇卦（传统三枚铜钱掷六次），得到一卦的完整排盘与白话参照。问CP契合时会先选一个你对他们的看法——事实你心里有数，卦只看氛围和走向，绝不跟事实对着干。</p>
+    <p>全部推演在你手机本地完成：不联网、不上传、不调用任何在线服务；卦史只存在你的手机里，可随时清除。</p>
+    <p>鉴定结果由固定的传统规则生成（用神旺衰 × 动爻生克 × 卦变），属于传统文化趣味的参照，不构成对任何真实人物的判断，也与任何平台无关。</p>
+    <button id="aboutClose" class="sheet-close" type="button">知道了</button>
+  </div>
+</div>
+
+<!-- 卦卡预览 -->
+<div id="cardMask" class="mask hidden">
+  <div class="sheet card-sheet">
+    <img id="cardImg" alt="卦辞图片">
+    <div id="cardCanvas" class="hidden"></div>
+    <p id="cardHint">点下面「发笔记保存全部历史图鉴」，大字报·卦盘·历史图鉴一次带走</p>
+    <button id="cardShareBtn" type="button" class="sheet-share hidden">发笔记保存全部历史图鉴</button>
+    <button id="cardClose" class="sheet-close" type="button">关闭</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- 三十五轮（lyvia）：每页底端软性品牌脚注 -->
+<footer class="brand-foot">idolship · 豆卜</footer>
+
+<script src="engine.js"></script>
+<script src="readings.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
