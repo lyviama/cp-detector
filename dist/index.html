@@ -44,7 +44,7 @@
   <section id="viewState" class="view hidden">
     <p class="cast-cat state-title">选一个你对你的CP的看法<br><span class="state-title-sub">对照结果看你的直觉是否准确</span></p>
     <div id="stateList" class="cat-list"></div>
-    <button id="skipStateBtn" class="ghost-btn state-skip" type="button">不表态，直接看卦 →</button>
+    <button id="skipStateBtn" class="cat-btn state-skip" type="button"><span class="cat-name">不表态，直接起卦</span><span class="cat-desc">不下结论，卦象说了算</span><span class="cat-next">›</span></button>
     <p class="state-hint">点一个看法，下一步填鉴定对象 →</p>
     <button id="stateBack" class="ghost-btn" type="button">← 回首页</button>
   </section>
@@ -58,8 +58,7 @@
       <input id="cpNameInput" type="text" maxlength="24" autocomplete="off" placeholder="写下你家CP的名字/对你产品的疑惑">
       <label class="field-label" for="castNumInput">数字起卦</label>
       <input id="castNumInput" type="text" inputmode="numeric" maxlength="32" autocomplete="off" placeholder="可以输入纪念日/生日，不填则用随机起卦法">
-          <button id="manualEntryBtn" class="btn-entry" type="button">手动起卦</button>
-          <p class="entry-desc">想要更准？手动起卦功能已上线，点此进行即时摇卦/直接装卦排盘→</p>
+          <button id="manualEntryBtn" class="cat-btn manual-entry" type="button"><span class="cat-name">🎲 手动起卦</span><span class="cat-desc">即时摇卦 / 直接装卦，史同虚拟人物也适用</span><span class="cat-next">›</span></button>
     <button id="inputStart" type="button">开始鉴定</button>
     </div>
     <p class="hint">名字和数字信息只在本地运行，用于起卦，不联网上传</p>
@@ -130,8 +129,10 @@
       <button id="postNoteBtn" type="button">发笔记保存全部历史图鉴</button>
       <button id="saveCardBtn" type="button" class="ghost-btn">存本次完整卦盘</button>
       <button id="savePosterBtn" type="button" class="ghost-btn">存本次大字海报</button>
-      <button id="againBtn" class="ghost-btn" type="button">重测一次</button>
       <button id="backChoose2" class="ghost-btn" type="button">换对CP</button>
+    </div>
+    <div class="actions-bottom">
+      <button id="againBtn" class="btn-restart" type="button">↺ 重测一次</button>
     </div>
   </section>
 
