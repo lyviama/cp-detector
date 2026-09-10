@@ -1,0 +1,783 @@
+/* 真假CP鉴定器 — 豆卜同源暖色风（Chrome 61 基线：无 gap/aspect-ratio/clamp/:has/dvh） */
+:root {
+  /* 配色延续豆卜（Idolship）：米白底 + 白卡 + 品牌紫 + 暖橙点缀 */
+  --paper: #FFF9F0;
+  --paper-deep: #FFF3E0;
+  --ink: #2D2D2D;
+  --ink-soft: #8A8A8A;
+  --purple: #8B7EC8;
+  --purple-deep: #6B5DA8;
+  --gold: #FF9E6C;
+  --gold-soft: #FFD4A8;
+  --line: #F0ECE4;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Songti SC", "STSong", "Noto Serif SC", "SimSun", serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 18px calc(env(safe-area-inset-bottom, 0px) + 52px); /* 三十五轮：+52 给底部品牌脚注让位 */
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.hidden { display: none !important; }
+
+/* ── 顶栏 ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* 小红书容器顶部有原生返回/分享一排按键，整体下移避开；0904 十四轮（lyvia）：108px→96px、底距 8→2px，整体上移 */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 64px); /* 二十五轮（lyvia）：96→64，离上方原生键更近 */
+  padding-bottom: 2px;
+}
+.brand {
+  font-size: 21px;
+  color: var(--purple-deep);
+  letter-spacing: 2px;
+}
+/* 产品名一体：同字号同色 */
+.brand-sub {
+  font-size: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  margin-left: 0;
+}
+
+/* ── 通用按钮 ── */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  overflow: hidden;
+}
+.ghost-btn {
+  border: 1px solid #E8E0F5;
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 14px;
+  margin: 6px 6px 6px 0;
+}
+.ghost-btn:active { background: var(--paper-deep); }
+
+/* ── 菜单页垂直居中＋文字居中：内容落在屏幕中段，上方文字一律居中 ── */
+#viewChoose, #viewOther, #viewState, #viewCast, #viewBuf, #viewInput {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 152px);
+  text-align: center;
+}
+#viewBuf { text-align: center; }
+
+/* ── 首页文案 ── */
+.lead {
+  font-size: 31px;
+  color: var(--purple-deep);
+  margin: 26px 0 8px;
+  letter-spacing: 1px;
+}
+.lead-sub {
+  font-size: 16px;
+  color: var(--ink-soft);
+  margin-bottom: 30px;
+}
+.cat-list { display: flex; flex-wrap: wrap; }
+.cat-btn {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 44px 20px 20px;
+  margin: 0 0 14px;
+  box-shadow: 0 1px 0 rgba(122, 90, 168, 0.08);
+}
+/* 行尾下一步箭头：点整行即进入下一步 */
+.cat-next {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  color: var(--gold);
+}
+.cat-row {
+  width: 100%;
+  text-align: left;
+  background: #FFFFFF;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 0 0 12px;
+}
+/* 引流页行卡整体收小：只展示问法，不必占大位 */
+#otherList .cat-row {
+  padding: 11px 16px;
+  border-radius: 11px;
+  margin: 0 0 9px;
+}
+#otherList .cat-name { font-size: 16px; margin-bottom: 2px; }
+#otherList .cat-desc { font-size: 13px; }
+.cat-btn:active { background: var(--paper-deep); }
+/* 六十轮（lyvia）：选看法选项收窄成两列，少占位、更有设计感 */
+#stateList { display: grid; grid-template-columns: 1fr 1fr; }
+#stateList .cat-btn {
+  width: auto;
+  margin: 0 10px 10px 0;
+  padding: 13px 8px;
+  text-align: center;
+  border-radius: 12px;
+}
+#stateList .cat-btn:nth-child(2n) { margin-right: 0; }
+#stateList .cat-name { font-size: 15px; margin-bottom: 0; }
+#stateList .cat-next { display: none; }
+.cat-name {
+  display: block;
+  font-size: 22px;
+  color: var(--purple-deep);
+  margin-bottom: 5px;
+}
+.cat-desc { display: block; font-size: 15px; color: var(--ink-soft); }
+
+/* ── 首页（CP主路径 + 问点别的入口） ── */
+#startCpBtn {
+  display: block;
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  font-size: 21px;
+  letter-spacing: 2px;
+  padding: 19px 0;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 10px rgba(139, 126, 200, 0.35);
+}
+#startCpBtn:active { background: var(--purple-deep); }
+.other-entry {
+  display: block;
+  width: 100%;
+  text-align: center;
+  border: 1.5px dashed #C4B8E8;
+  border-radius: 12px;
+  padding: 16px 0;
+  font-size: 16px;
+  margin: 18px 0 0;
+}
+
+/* ── 问点别的（非CP四类 + 豆卜软广） ── */
+.ad-box {
+  background: rgba(255, 158, 108, 0.10);
+  border: 1px solid var(--gold-soft);
+  border-radius: 12px;
+  padding: 13px 15px;
+  margin: 4px 0 14px;
+}
+.ad-title {
+  font-size: 16px;
+  color: var(--purple-deep);
+  letter-spacing: 1px;
+  margin-bottom: 7px;
+}
+.ad-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+
+/* ── CP名输入 ── */
+.input-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 16px 18px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+/* 六十轮（lyvia）：标题去橙改专业配色——主标题墨色加粗，副行品牌紫 */
+.page-title {
+  font-size: 27px;
+  line-height: 1.45;
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0 0 8px;
+}
+.page-title-sub { font-size: 27px; margin-bottom: 20px; color: var(--purple-deep); font-weight: normal; }
+.field-label {
+  display: block;
+  font-size: 14px;
+  color: var(--purple-deep);
+  margin: 12px 0 6px;
+}
+.field-label:first-child { margin-top: 0; }
+
+/* 二十轮（lyvia）：提示文字入框（placeholder），弱化不抢行；二十一轮略缩号保整句不截断 */
+#cpNameInput::placeholder,
+#castNumInput::placeholder { color: rgba(90, 62, 124, 0.38); opacity: 1; font-size: 14px; letter-spacing: 0; }
+.field-optional { font-size: 12px; color: var(--ink-soft); }
+.input-card input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 17px;
+  color: var(--ink);
+  background: #FFFFFF;
+  border: 1px solid var(--gold-soft);
+  border-radius: 10px;
+  padding: 11px 12px;
+  margin-bottom: 4px;
+}
+#inputStart {
+  display: block;
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  font-size: 19px;
+  letter-spacing: 2px;
+  padding: 13px 0;
+  border-radius: 999px;
+  margin-top: 14px;
+  box-shadow: 0 3px 10px rgba(139, 126, 200, 0.35);
+}
+#inputStart:active { background: var(--purple-deep); }
+
+/* ── 缓冲推演 ── */
+.buf-wrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 26px;
+}
+.buf-ring {
+  width: 92px;
+  height: 92px;
+  border: 3px solid var(--gold-soft);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 1.1s linear infinite;
+}
+.buf-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 34px;
+  color: var(--purple-deep);
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.buf-text {
+  font-size: 20px;
+  color: var(--purple-deep);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+/* ── 摇卦 ── */
+.cast-cat { font-size: 17px; color: var(--purple-deep); font-weight: 600; margin-bottom: 30px; letter-spacing: 1px; }
+/* 选看法页标题：标题级字号（内容居中由视图继承） */
+.state-title {
+  font-size: 25px;
+  line-height: 1.5;
+  margin-bottom: 26px;
+}
+/* 十四轮（lyvia）：标题第二行小字 */
+.state-title-sub {
+  display: block;
+  font-size: 15px;
+  font-weight: normal;
+  letter-spacing: 1px;
+  opacity: 0.75;
+  margin-top: 8px;
+}
+/* 十四轮（lyvia）：跳过表态入口 */
+.state-skip {
+  width: 100%;
+  margin: 2px 0 20px;
+}
+.state-hint { font-size: 15px; color: var(--ink-soft); margin: 2px 0 16px; }
+.coins { margin-bottom: 30px; }
+.coin {
+  display: inline-block;
+  width: 74px;
+  height: 74px;
+  line-height: 68px;
+  border: 3px solid var(--gold);
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: var(--purple-deep);
+  font-size: 26px;
+  margin: 0 9px;
+  vertical-align: middle;
+}
+.coin.on { background: var(--gold-soft); }
+.coins.shaking .coin { animation: jitter 0.28s infinite; }
+@keyframes jitter {
+  0% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-7px) rotate(-8deg); }
+  60% { transform: translateY(3px) rotate(7deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+#shakeBtn {
+  display: block;
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  font-size: 21px;
+  letter-spacing: 2px;
+  padding: 17px 0;
+  border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(139, 126, 200, 0.35);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+#shakeBtn.holding { background: var(--purple-deep); transform: scale(0.98); }
+.hint { font-size: 13px; color: var(--ink-soft); margin: 14px 0 22px; }
+
+/* ── 结果 ── */
+#viewResult { padding-top: 8px; }
+.res-head { text-align: center; margin-bottom: 16px; }
+.res-cat { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
+.res-verdict {
+  font-size: 52px;
+  line-height: 1.25;
+  letter-spacing: 6px;
+  margin: 4px 0 6px;
+  font-weight: bold;
+}
+.res-gua { font-size: 24px; color: var(--purple-deep); letter-spacing: 3px; }
+.res-bian { font-size: 14px; color: var(--ink-soft); margin-top: 8px; }
+.res-star { font-size: 17px; margin-top: 8px; letter-spacing: 2px; }
+.band-high { color: #4CAF50; }
+.band-mid { color: var(--gold); }
+.band-low { color: #E57373; }
+.res-title-line {
+  text-align: center;
+  font-size: 14px;
+  color: var(--purple);
+  white-space: pre-line;
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+/* 二十一轮（lyvia）：称号要有称号的样子——小字「获得称号」＋全页最大字称号 */
+.res-title-line .title-cap { display: block; font-size: 14px; color: var(--purple); opacity: 0.72; letter-spacing: 4px; }
+.res-title-line .title-name { display: block; font-size: 34px; font-weight: 700; color: #E57373; letter-spacing: 2px; margin: 4px 0 6px; }
+.res-title-line .title-count { display: block; font-size: 14px; color: var(--ink-soft); }
+
+.gua-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 14px 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.gua-text { font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
+.yao-table { width: 100%; border-collapse: collapse; }
+.yao-table td { padding: 7px 4px; border-bottom: 1px dashed var(--gold-soft); font-size: 15px; }
+.yao-table tr:last-child td { border-bottom: none; }
+.yao-name { width: 64px; color: var(--purple-deep); }
+.yao-glyph { width: 86px; color: var(--purple); letter-spacing: 1px; }
+.yao-tail { width: 64px; text-align: right; color: var(--gold); font-size: 13px; }
+.yao-row.mv .yao-tail { color: #E57373; }
+.yao-row.ys td { background: rgba(255, 158, 108, 0.13); }
+.res-day { font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
+
+/* 三十七轮（lyvia）：大字报前置上屏——成品图先露脸制造分享欲，点图开保存预览 */
+/* 四十八轮：canvas 兜底与 img 同款式——容器拦 data: 图时内嵌卡直接挂画布 */
+.poster-box { margin: 2px 0 16px; }
+.poster-box img,
+.poster-box canvas {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(107, 79, 168, 0.10);
+}
+.poster-hint { font-size: 12px; color: var(--ink-soft); text-align: center; margin-top: 8px; letter-spacing: 0.5px; }
+
+.reading {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 14px 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.reading .para:last-of-type { margin-bottom: 14px; }
+.para { font-size: 16px; line-height: 1.85; margin-bottom: 14px; text-align: justify; } /* 三十六轮：段距放宽，分段呼吸感 */
+.timing-para { color: var(--purple-deep); }
+.chips { margin: 4px 0 14px; }
+.chip {
+  display: inline-block;
+  border: 1px solid var(--gold-soft);
+  color: #E07A3E;
+  border-radius: 999px;
+  font-size: 13px;
+  padding: 4px 12px;
+  margin: 0 8px 8px 0;
+}
+.advice-title {
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+#advice, #resAdvice { margin-left: 0; list-style: none; }
+#resAdvice li {
+  font-size: 15px;
+  line-height: 1.7;
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 8px;
+}
+#resAdvice li:before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 11px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.footnote {
+  font-size: 12px;
+  color: #BDBDBD;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+.actions { text-align: center; }
+/* 五十六→五十七轮（lyvia）：发笔记是主行动——「发笔记保存全部历史图鉴」大紫钮；
+   存图拆两个单存 ghost（「存本次完整卦盘」「存本次大字海报」），全套只走发笔记 */
+#postNoteBtn {
+  display: block;
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  font-size: 17px;
+  letter-spacing: 2px;
+  padding: 14px 0;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 10px rgba(139, 126, 200, 0.35);
+}
+#postNoteBtn:active { background: var(--purple-deep); }
+/* 五十七轮：存图拆两个单存 ghost（卦盘/大字海报），间距交给 ghost 自身 margin */
+/* ── 卦史 ── */
+#viewHistory { padding-top: 16px; text-align: center; }
+.hist-title { font-size: 20px; color: var(--purple-deep); margin-bottom: 14px; }
+#historyList { list-style: none; }
+.hist-item {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  overflow: hidden;
+}
+.hist-day { color: var(--ink-soft); margin-right: 10px; font-size: 12px; }
+.hist-cat { color: var(--gold); margin-right: 10px; font-size: 12px; }
+.hist-gua { color: var(--purple-deep); }
+.hist-band { float: right; color: var(--gold); font-size: 12px; }
+.hist-empty { text-align: center; color: var(--ink-soft); padding: 30px 0; font-size: 14px; }
+
+/* ── 卦图鉴 ── */
+.dex-progress { font-size: 13px; color: var(--gold); margin-bottom: 12px; }
+.dex-grid {
+  width: 336px; /* 8 格 × (38+4)px，钉死每行 8 格 */
+  max-width: 100%;
+  margin: 0 auto 22px;
+  overflow: hidden;
+  padding: 10px 0 2px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.dex-cell {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 38px;
+  margin: 0 4px 7px 0;
+  padding: 6px 0;
+  text-align: center;
+  font-size: 12px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: rgba(139, 126, 200, 0.09);
+  color: rgba(45, 45, 45, 0.35);
+}
+.dex-cell.got {
+  background: rgba(255, 158, 108, 0.18);
+  color: #E07A3E;
+  font-weight: bold;
+  border-color: rgba(255, 158, 108, 0.55);
+}
+.dex-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+/* ── 弹层 ── */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(45, 45, 45, 0.5);
+  z-index: 50;
+  overflow: hidden;
+}
+.sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--paper);
+  border-radius: 18px 18px 0 0;
+  padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 22px);
+  max-height: 82%;
+  overflow-y: auto;
+}
+.sheet h3 { font-size: 19px; color: var(--purple-deep); margin-bottom: 12px; }
+.sheet p { font-size: 14px; line-height: 1.8; color: var(--ink-soft); margin-bottom: 10px; }
+.sheet .sheet-close {
+  display: block;
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 16px;
+  padding: 12px 0;
+  margin-top: 12px;
+}
+/* 五十轮：弹层「发笔记分享」——存图失败的自救路（容器禁长按菜单，存相册非唯一出路） */
+.sheet .sheet-share {
+  display: block;
+  width: 100%;
+  background: #fff;
+  color: var(--purple-deep);
+  border: 1px solid var(--purple);
+  border-radius: 999px;
+  font-size: 16px;
+  padding: 12px 0;
+  margin-top: 12px;
+}
+.card-sheet { text-align: center; }
+#cardImg {
+  max-width: 78%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+/* 兜底：容器禁 data: 图时直接挂画布节点（同画面，必有显示） */
+#cardCanvas canvas,
+.card-canvas {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 78%;
+  max-height: 56vh;
+  margin: 0 auto 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+/* 二十四轮（lyvia）：提示允许换行，不再一行顶出屏幕 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 46px);
+  transform: translateX(-50%);
+  background: rgba(107, 93, 168, 0.95);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 18px;
+  border-radius: 14px;
+  z-index: 90;
+  max-width: 82vw;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+
+/* 十一轮：首页算法介绍（紫色小字居中，lyvia 规格） */
+.algo-note { margin-top: 20px; }
+.algo-note p {
+  color: var(--purple);
+  font-size: 13px;
+  line-height: 1.9;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* 三十六轮标位置，三十九轮（lyvia）再收窄：高亮只落在“引子”上——判断句只上引号前的字，
+ * 正文有冒号只上冒号前；金句整句保留但撤小标题，emoji 后直接接句子 */
+.sec-tag { font-size: 12px; letter-spacing: 2px; color: #8B7EC8; }
+.gua-para { color: #8A8A8A; font-size: 14px; line-height: 1.7; }
+.hl-block { margin-bottom: 14px; }
+.hl-vd .para { margin-bottom: 0; }
+.hl-lead { color: #5A4692; font-weight: 700; }
+.para.hl-gold { background: rgba(184, 134, 11, 0.08); border-left: 3px solid #B8860B; border-radius: 10px; padding: 12px 14px; color: #9A6F08; font-weight: 700; font-size: 17px; margin-bottom: 14px; }
+.hl-tag { display: block; font-size: 11px; font-weight: 400; letter-spacing: 2px; color: #B0A6CE; margin-bottom: 4px; }
+
+/* 三十五轮（lyvia）：每页底端软性品牌脚注，小字不抢内容 */
+.brand-foot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: rgba(45, 45, 45, 0.34);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ── 五十五轮（lyvia）：手动起卦（豆卜手动摇卦/装卦迁移）── */
+/* 六十轮（lyvia）：入口从小链接升格成按钮「手动起卦」+按钮下描述行 */
+.btn-entry {
+  display: block;
+  width: 100%;
+  margin: 16px 0 0;
+  padding: 12px 0;
+  background: #FFFFFF;
+  border: 1.5px solid var(--purple);
+  border-radius: 12px;
+  color: var(--purple-deep);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-family: inherit;
+}
+.btn-entry:active { background: var(--paper-deep); }
+.entry-desc {
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: center;
+  margin: 8px 0 2px;
+}
+
+.seg {
+  display: -webkit-box;
+  display: -webkit-flex;
+  margin: 18px auto 12px;
+  max-width: 320px;
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+}
+.seg-btn {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  text-align: center;
+  padding: 9px 0;
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.seg-btn.on { background: #fff; color: var(--ink); font-weight: 600; }
+
+.manual-tip {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: pre-line; /* 五十八轮：装卦说明两行版 */
+  margin: 10px 16px;
+}
+.manual-tip-sub { margin-top: 2px; }
+
+.yao-pick { list-style: none; margin: 6px 20px; }
+.yao-row6 {
+  display: flex;
+  align-items: center;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.yao-row6.pickable:active { background: var(--paper-deep); }
+.yao-idx {
+  width: 52px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.yao-mid {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.yao-glyph6 {
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--ink);
+}
+.yao-row6.pickable .yao-glyph6 { padding: 6px 0; } /* 五十九轮：符号可点，扩大触区 */
+.yao-row6.empty .yao-glyph6 { color: var(--ink-soft); }
+.yao-mini {
+  margin-left: 10px;
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.yao-mini.moving { color: var(--gold); font-weight: 600; }
+.yao-star {
+  width: 44px;
+  text-align: right;
+  font-size: 20px;
+  color: var(--line-strong, #c9bfae);
+  padding: 4px 0 4px 8px;
+}
+.yao-star.on { color: var(--gold); }
+.yao-star:active { opacity: 0.6; }
+
+.manual-actions { margin: 18px 20px 6px; }
+#manualRollBtn {
+  display: block;
+  width: 100%;
+  padding: 13px 0;
+  margin-bottom: 10px;
+  background: #fff;
+  color: var(--purple);
+  border: 1.5px solid var(--purple);
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+}
+#manualRollBtn:active { background: var(--paper-deep); }
+#manualGo {
+  display: block;
+  width: 100%;
+  padding: 14px 0;
+  background: var(--purple);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+}
+#manualGo:disabled { background: var(--gold-soft); color: #fff; }
+#manualGo:active { background: var(--purple-deep); }
+#manualGo:disabled:active { background: var(--gold-soft); }
+.manual-actions .ghost-btn { margin-top: 12px; }
