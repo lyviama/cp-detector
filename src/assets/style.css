@@ -79,8 +79,8 @@ button {
 #viewChoose, #viewOther, #viewState, #viewCast, #viewBuf, #viewInput {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - 152px);
+  justify-content: flex-start; /* 六十二轮：首页大空白取消——顶对齐 */
+  min-height: 0;
   text-align: center;
 }
 #viewBuf { text-align: center; }
@@ -89,7 +89,7 @@ button {
 .lead {
   font-size: 31px;
   color: var(--purple-deep);
-  margin: 26px 0 8px;
+  margin: 6px 0 8px; /* 六十二轮：26→6 上方空白收紧 */
   letter-spacing: 1px;
 }
 .lead-sub {
@@ -136,17 +136,8 @@ button {
 #otherList .cat-name { font-size: 16px; margin-bottom: 2px; }
 #otherList .cat-desc { font-size: 13px; }
 .cat-btn:active { background: var(--paper-deep); }
-/* 六十轮（lyvia）：选看法选项收窄成两列，少占位、更有设计感 */
-#stateList { display: grid; grid-template-columns: 1fr 1fr; }
-#stateList .cat-btn {
-  width: auto;
-  margin: 0 10px 10px 0;
-  padding: 13px 8px;
-  text-align: center;
-  border-radius: 12px;
-}
-#stateList .cat-btn:nth-child(2n) { margin-right: 0; }
-#stateList .cat-name { font-size: 15px; margin-bottom: 0; }
+/* 六十二轮（lyvia）：两列改四张通栏卡——与「不表态，直接起卦」同UI同层级 */
+#stateList { display: block; }
 #stateList .cat-next { display: none; }
 .cat-name {
   display: block;
@@ -642,8 +633,9 @@ button {
   color: var(--purple);
   font-size: 13px;
   line-height: 1.9;
-  text-align: center;
-  margin-bottom: 6px;
+  text-align: left; /* 六十二轮：居中改居左 */
+  text-indent: 2em; /* 首行缩进两格 */
+  margin-bottom: 10px;
 }
 
 /* 三十六轮标位置，三十九轮（lyvia）再收窄：高亮只落在“引子”上——判断句只上引号前的字，
@@ -833,3 +825,17 @@ button {
   z-index: 40;
   pointer-events: none;
 }
+
+/* ── 六十二轮：说明面板分段排版恢复——段与段之间拉开，阅读节奏分明 ── */
+.sheet p {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--ink);
+  text-align: left;
+  margin: 0 0 16px;
+}
+.sheet p:last-of-type { margin-bottom: 20px; }
+
+/* ── 六十二轮：输入页起卦方式二选一seg ── */
+.cast-mode-seg { margin: 4px auto 6px; }
+.seg-hint { font-size: 12px; color: var(--ink-soft); text-align: center; margin: 0 0 14px; }
