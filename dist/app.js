@@ -1256,7 +1256,12 @@
     $('#skipStateBtn').addEventListener('click', function () { state.cpState = ''; gotoInput(); }); // 十四轮：跳过表态，卦直说
     $('#inputStart').addEventListener('click', submitInput);
     $('#inputBack').addEventListener('click', function () { goto('viewState'); });
-    $('#manualEntryBtn').addEventListener('click', openManual); // 五十五轮：手动起卦
+    // 六十二轮：起卦方式seg——「手动」点了直接进手动起卦页，「数字」留在本页
+    $('#segManual').addEventListener('click', openManual);
+    $('#segNum').addEventListener('click', function () {
+      $('#segNum').classList.add('on'); $('#segManual').classList.remove('on');
+      $('#numCastPane').style.display = ''; // 从手动页返回时恢复
+    });
     $('#manualBack').addEventListener('click', function () { goto('viewInput'); });
     $('#segFit').addEventListener('click', function () { setManualMode('fit'); });
     $('#segShake').addEventListener('click', function () { setManualMode('shake'); });
