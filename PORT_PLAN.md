@@ -4,7 +4,7 @@
 > 时间线：9/4 可玩版＋≥10卦一致性对照 → 9/5 审计通过整包＝最晚提审 → 9/6-9/7 发笔记。
 
 ## 目录约定
-- `ref/liuyao.py`（743 行）＋ `ref/algorithm.py`（2489 行）＝服务器线上引擎快照（/home/honglou/apps/idol-astro/，0903 拉取）。**移植对照源，禁直接改线上。**
+- `ref/liuyao.py`（743 行）＋ `ref/algorithm.py`（2489 行）＝服务器线上引擎快照（/home/server/apps/idol-astro/，0903 拉取）。**移植对照源，禁直接改线上。**
 - `vendor/minitool-skill/`＝小红书官方打包规范 **v1.6.0**（SKILL.md＋7 份 references＋审计脚本）。`minitool-skill-1.2.0.bak/` 是旧版，**以 1.6.0 为准**。同内容已装 `.claude/skills/minitool-zip-builder`。
 - `src/`（待建）＝源码；`dist/`＝打包产物目录；`tool.zip`＝最终交付。
 
