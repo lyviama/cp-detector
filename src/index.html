@@ -57,10 +57,16 @@
     <div class="input-card">
       <label class="field-label" for="cpNameInput">鉴定对象</label>
       <input id="cpNameInput" type="text" maxlength="24" autocomplete="off" placeholder="写下你家CP的名字/对你产品的疑惑">
-      <label class="field-label" for="castNumInput">数字起卦</label>
-      <input id="castNumInput" type="text" inputmode="numeric" maxlength="32" autocomplete="off" placeholder="可以输入纪念日/生日，不填则用随机起卦法">
-          <button id="manualEntryBtn" class="cat-btn manual-entry" type="button"><span class="cat-name">🎲 手动起卦</span><span class="cat-desc">即时摇卦 / 直接装卦，史同虚拟人物也适用</span><span class="cat-next">›</span></button>
-    <button id="inputStart" type="button">开始鉴定</button>
+      <!-- 六十二轮：起卦方式二选一（参照豆卜seg切换）——数字/手动同层级 -->
+      <div class="seg cast-mode-seg" id="castModeSeg">
+        <div class="seg-btn on" id="segNum" data-mode="num">📊 数字起卦</div>
+        <div class="seg-btn" id="segManual" data-mode="manual">🎲 手动起卦</div>
+      </div>
+      <p class="seg-hint" id="segHint">两种方式二选一：用你们的数字起卦，或亲手摇一卦</p>
+      <div id="numCastPane">
+        <input id="castNumInput" type="text" inputmode="numeric" maxlength="32" autocomplete="off" placeholder="可以输入纪念日/生日，不填则用随机起卦法">
+        <button id="inputStart" type="button">开始鉴定</button>
+      </div>
     </div>
     <p class="hint">名字和数字信息只在本地运行，用于起卦，不联网上传</p>
 
@@ -84,7 +90,7 @@
       <button id="manualReset" type="button" class="ghost-btn">重装</button>
       <button id="manualGo" type="button" disabled>选一个动爻就能成卦</button>
     </div>
-    <p class="manual-tip manual-tip-sub">☆ 标出的那一爻就是动爻——卦因它而变</p>
+    <p class="manual-tip">硬币看法：掷三枚硬币——<br>三个背 = 老阳（动阳 〇）｜ 三个字 = 老阴（动阴 ×）<br>两个背一个字 = 阴爻 ｜ 两个字一个背 = 阳爻<br>☆ 点哪爻的星星，哪爻就是动爻</p>
     <button id="manualBack" class="ghost-btn" type="button">← 上一步</button>
   </section>
 
@@ -130,10 +136,10 @@
       <button id="postNoteBtn" type="button">发笔记保存全部历史图鉴</button>
       <button id="saveCardBtn" type="button" class="ghost-btn">存本次完整卦盘</button>
       <button id="savePosterBtn" type="button" class="ghost-btn">存本次大字海报</button>
-      <button id="backChoose2" class="ghost-btn" type="button">换对CP</button>
+      <button id="againBtn" class="ghost-btn" type="button">同一对CP再测一次</button>
     </div>
     <div class="actions-bottom">
-      <button id="againBtn" class="btn-restart" type="button">↺ 重测一次</button>
+      <button id="backChoose2" class="btn-restart" type="button">换对CP，再测一次</button>
     </div>
   </section>
 
